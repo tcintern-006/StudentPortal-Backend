@@ -32,12 +32,12 @@ const registerUser = async (req, res) => {
 
         const token = generateToken(newUser);
 
-        res.cookie('token', token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
-            maxAge: 7 * 24 * 60 * 60 * 1000
-        })
+   res.cookie('token', token, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+    maxAge: 7 * 24 * 60 * 60 * 1000
+})
 
 
 
@@ -82,12 +82,12 @@ const loginUser = async (req, res) => {
         const dbuser = user.rows[0];
         const token = generateToken(dbuser);
 
-        res.cookie("token", token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
-            maxAge: 7 * 24 * 60 * 60 * 1000
-        });
+    res.cookie('token', token, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+    maxAge: 7 * 24 * 60 * 60 * 1000
+})
 
         const { password: _, ...userWithoutPassword } = dbuser;
 
