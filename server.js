@@ -11,7 +11,7 @@ const cookieParser = require('cookie-parser');
 const authRouter = require("./routes/authRoutes");
 const port = process.env.PORT || 3000;
 
-
+app.set('trust proxy', 1);
 
 app.use('/static', express.static('public'));
 app.use(cors({
