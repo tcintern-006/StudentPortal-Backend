@@ -15,7 +15,7 @@ const port = process.env.PORT || 3000;
 
 app.use('/static', express.static('public'));
 app.use(cors({
-    origin: ["http://localhost:3000", "https://student-portal-nextjs-swart.vercel.app"],
+    origin: ["https://student-portal-nextjs-swart.vercel.app"],
     credentials: true
 }));       
 app.use(express.json()); 
