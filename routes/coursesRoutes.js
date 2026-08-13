@@ -1,6 +1,6 @@
 const express = require("express");
 const { getallCourses, getCoursesbyID, addCourse, updateCourses, deleteCourses } = require("../controllers/coursesController");
-const courseValidationRules = require("../middlewares/validateData");
+const {courseValidationRules} = require("../middlewares/validateData");
 
 const apiRouter = express.Router();
 
