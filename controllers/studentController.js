@@ -2,7 +2,7 @@ const { validationResult } = require("express-validator")
 const pool = require("../Config/db")
 
 
-const getallStudents = async (req, res) => {
+const getallStudents = async (req, res, next) => {
 
     try {
         const data = await pool.query(`SELECT * FROM students`)
@@ -18,7 +18,7 @@ const getallStudents = async (req, res) => {
 }
 
 
-const getStudentById = async (req, res) => {
+const getStudentById = async (req, res, next) => {
     const id = req.params.id;
 
     try {
@@ -37,7 +37,8 @@ const getStudentById = async (req, res) => {
 }
 
 
-const addStudent = async (req, res) => {
+const addStudent = async (req, res, next) => {
+    
     const error = validationResult(req)
     if (!error.isEmpty()) {
         return res.status(400).json({ error: error })
@@ -59,13 +60,12 @@ const addStudent = async (req, res) => {
         res.status(201).json({ createdStudent: student.rows[0] })
 
     } catch (error) {
-        console.log(error)
-        res.status(500).json({ message: 'Something went wrong' })
+       next(error)
     }
 }
 
 
-const updateStudent = async (req, res) => {
+const updateStudent = async (req, res, next) => {
     const id = req.params.id;
     const { name, email } = req.body;
 
@@ -86,13 +86,12 @@ const updateStudent = async (req, res) => {
         res.status(200).json({ updatedStudent: updatedStudent.rows[0] })
 
     } catch (error) {
-        console.log(error)
-        res.status(500).json({ message: 'Something went wrong' })
+       next(error)
     }
 }
 
 
-const deleteStudent = async (req, res) => {
+const deleteStudent = async (req, res, next) => {
     const id = req.params.id;
 
     try {
@@ -108,8 +107,7 @@ const deleteStudent = async (req, res) => {
         res.status(200).json({ deletedStudent: deleted.rows[0] })
 
     } catch (error) {
-        console.log(error)
-        res.status(500).json({ message: 'Something went wrong' })
+        next(error)
     }
 }
 

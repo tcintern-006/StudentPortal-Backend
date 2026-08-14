@@ -3,7 +3,7 @@ const pool = require("../Config/db");
 const bcrypt = require('bcrypt');
 const generateToken = require("../utils/jwtToken");
 
-const registerUser = async (req, res) => {
+const registerUser = async (req, res, next) => {
     const error = validationResult(req);
     if (!error.isEmpty()) {
         return res.status(400).json({ errors: error })
@@ -31,12 +31,11 @@ const registerUser = async (req, res) => {
             token
         });
     } catch (error) {
-        console.log(error)
-        res.status(500).json({ message: 'Something went wrong' })
+        next(error)
     }
 }
 
-const loginUser = async (req, res) => {
+const loginUser = async (req, res, next) => {
     const error = validationResult(req);
     if (!error.isEmpty()) {
         return res.status(400).json({ errors: error })
@@ -60,12 +59,11 @@ const loginUser = async (req, res) => {
             token
         });
     } catch (error) {
-        console.log(error)
-        res.status(500).json({ message: 'Something went wrong' })
+        next(error)
     }
 }
 
-const getProfile = async (req, res) => {
+const getProfile = async (req, res, next) => {
     const id = req.user.id;
     try {
         const user = await pool.query(`SELECT * FROM users WHERE id = $1`, [id])
@@ -75,18 +73,40 @@ const getProfile = async (req, res) => {
         const { password: _, ...userWithoutPassword } = user.rows[0];
         res.status(200).json({ user: userWithoutPassword });
     } catch (error) {
-        console.log(error)
-        res.status(500).json({ message: 'Something went wrong' })
+        next(error)
     }
 }
 
-const logout = async (req, res) => {
+const logout = async (req, res, next) => {
     try {
         return res.status(200).json({ message: "Logout successful" });
     } catch (error) {
-        console.log(error)
-        res.status(500).json({ message: 'Something went wrong' })
+        next(error)
     }
 }
 
-module.exports = { registerUser, loginUser, getProfile, logout }
+const updateProfile = async (req, res, next) => {
+    const { email } = req.body;
+    const id = req.user.id;
+    if (!email) {
+        return res.status(400).json({ message: 'email required' });
+    }
+
+    try {
+           const updatedUser = await pool.query(
+            'UPDATE users SET email = $1 WHERE id = $2 RETURNING id, name, email, role, created_at',
+            [email, id]
+        );
+
+        if (updatedUser.rowCount === 0) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.status(200).json({
+            user: updatedUser.rows[0]
+        });
+    } catch (error) {
+        next()
+    }
+}
+module.exports = { registerUser, loginUser, getProfile, logout , updateProfile}

@@ -3,7 +3,7 @@ const pool = require("../Config/db")
 
 
 
-const getallInstructors = async (req, res) => {
+const getallInstructors = async (req, res , next) => {
 
     try {
         const allInstructors = await pool.query(`SELECT * FROM instructors`)
@@ -12,8 +12,7 @@ const getallInstructors = async (req, res) => {
         }
         res.status(200).json({ instructors: allInstructors.rows })
     } catch (error) {
-        console.log(error)
-        res.status(500).json({ message: 'Something went wrong' })
+        next(error)
     }
 
 
@@ -21,7 +20,7 @@ const getallInstructors = async (req, res) => {
 
 
 
-const addInstructors = async (req, res) => {
+const addInstructors = async (req, res ,next ) => {
 
     const error = validationResult(req)
 
@@ -53,14 +52,13 @@ const addInstructors = async (req, res) => {
 
     } catch (error) {
 
-        console.log(error)
-        res.status(500).json({ message: 'Something went wrong' })
+        next(error)
 
     }
 }
 
 
-const updateInstructors = async (req, res) => {
+const updateInstructors = async (req, res , next) => {
     const id = req.params.id;
     const { name, role, pic, bio, experties, experience, students_count, rating, linkedln, github, twitter } = req.body;
 
@@ -93,14 +91,13 @@ const updateInstructors = async (req, res) => {
 
     } catch (error) {
 
-        console.log(error)
-        res.status(500).json({message :'Something went wrong'})
+        next(error)
 
     }
 
 }
 
-const deleteInstructors = async (req , res)=>{
+const deleteInstructors = async (req , res, next)=>{
 
     const id = req.params.id;
     try {
@@ -120,8 +117,7 @@ const deleteInstructors = async (req , res)=>{
         res.status(200).json({deleted : instructor.rows[0]})
         
     } catch (error) {
-        console.log(error);
-        res.status(500).json({message : 'Something went wrong'})
+        next(error)
     }
 
 }
