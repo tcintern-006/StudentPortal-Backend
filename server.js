@@ -12,11 +12,11 @@ const errorHandler = require("./middlewares/errorHandler");
 const port = process.env.PORT || 3000;
 
 app.use('/static', express.static('public'));
-// app.use(cors({
-//     origin: ["https://student-portal-nextjs-swart.vercel.app"]
-// }));
+app.use(cors({
+     origin: ["https://student-portal-nextjs-swart.vercel.app"]
+ }));
 
-app.use(cors());
+// app.use(cors());
 app.use(express.json());
 
 pool.query('SELECT NOW()', (err, res) => {
