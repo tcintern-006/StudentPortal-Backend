@@ -8,7 +8,7 @@ const router = express.Router()
 
 router.get('/instructors', getallInstructors)
 
-router.post('/instructors' , validateInstructor ,protect, adminAccess ,addInstructors)
+router.post('/instructors',protect, adminAccess , validateInstructor  ,addInstructors)
 
 router.put('/instructors/:id',protect, adminAccess, updateInstructors)
 
