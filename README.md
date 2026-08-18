@@ -189,19 +189,39 @@ app.use(errorHandler);
 Expected outcomes (`404`, `403`, `409` on duplicate email, `400` on validation failure) are returned directly from controllers with a specific message, since these are normal business logic, not unexpected failures.
 
 ---
+## Running with Docker
 
-## Known Limitations / Next Steps
+This backend can be run as a portable Docker container, independent of local Node.js setup.
 
-Documented honestly, since a real production checklist would flag these:
+### Build the image
+\`\`\`bash
+docker build -t course-api .
+\`\`\`
 
-- **Instructor routes are not authentication-gated** — currently anyone can create/update/delete instructors. If instructors become admin-managed like courses/students, add `protect` + `adminAccess` there too.
-- **`getallCourses`** currently applies `LIMIT` only on the search branch, and returns `404` when zero rows match — an empty result set from a search is arguably a valid response (`200` with `[]`), not an error, and is worth revisiting.
-- **JWT is stored client-side in `localStorage`** (see frontend), which is simple but vulnerable to XSS-based token theft compared to an `httpOnly` cookie. Acceptable for a learning project; worth reconsidering for production.
-- **Pagination** (`OFFSET`/page numbers) was scoped down to a flat `LIMIT` — no page-through UI exists yet.
+### Run the container
+\`\`\`bash
+docker run -p 8000:8000 \
+  -e PORT=8000 \
+  -e NODE_ENV=production \
+  -e DATABASE_URL="your_neon_connection_string" \
+  -e JWT_SECRET="your_jwt_secret" \
+  -e JWT_EXPIRES_IN="7d" \
+  course-api
+\`\`\`
 
----
+### Required Environment Variables
+| Variable | Description |
+|---|---|
+| `PORT` | Port the server listens on (default: 8000) |
+| `NODE_ENV` | Environment mode (e.g. production) |
+| `DATABASE_URL` | Neon PostgreSQL connection string |
+| `JWT_SECRET` | Secret key used to sign JWT tokens |
+| `JWT_EXPIRES_IN` | JWT token expiry duration (e.g. 7d) |
 
-## Author
+### Port
+The application runs on port **8000** inside the container.
+
+> Note: Sensitive values (`DATABASE_URL`, `JWT_SECRET`) are never baked into the Docker image. They are passed at runtime via `-e` flags or a `--env-file`.
 
 **Muhammad Ammar Akbar**
 [LinkedIn](https://www.linkedin.com/in/muhammadammar46/) · [GitHub](https://github.com/tcintern-006)
